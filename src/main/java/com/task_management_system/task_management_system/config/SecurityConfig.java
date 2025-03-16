@@ -2,8 +2,7 @@ package com.task_management_system.task_management_system.config;
 
 import com.task_management_system.task_management_system.security.AuthEntryPointJwt;
 import com.task_management_system.task_management_system.security.AuthTokenFilter;
-import com.task_management_system.task_management_system.service.impl.UserDetailsServiceImpl;
-import lombok.AllArgsConstructor;
+import com.task_management_system.task_management_system.security.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private UserServiceImpl userDetailsService;
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;

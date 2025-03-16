@@ -1,4 +1,4 @@
-package com.task_management_system.task_management_system.model.dto;
+package com.task_management_system.task_management_system.security.model;
 
 import java.util.List;
 

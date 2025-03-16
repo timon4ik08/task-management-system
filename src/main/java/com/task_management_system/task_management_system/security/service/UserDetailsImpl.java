@@ -1,4 +1,4 @@
-package com.task_management_system.task_management_system.service.impl;
+package com.task_management_system.task_management_system.security.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.task_management_system.task_management_system.model.User;

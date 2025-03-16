@@ -1,4 +1,4 @@
-package com.task_management_system.task_management_system.service.impl;
+package com.task_management_system.task_management_system.security.service;
 
 import com.task_management_system.task_management_system.model.User;
 import com.task_management_system.task_management_system.repository.UserRepository;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserServiceImpl implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
