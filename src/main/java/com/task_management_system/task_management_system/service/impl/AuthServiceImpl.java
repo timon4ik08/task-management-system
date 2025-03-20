@@ -3,6 +3,8 @@ package com.task_management_system.task_management_system.service.impl;
 import com.task_management_system.task_management_system.model.ERole;
 import com.task_management_system.task_management_system.model.Role;
 import com.task_management_system.task_management_system.model.User;
+import com.task_management_system.task_management_system.security.exception.AuthorizationException;
+import com.task_management_system.task_management_system.security.exception.RegistrationException;
 import com.task_management_system.task_management_system.security.model.JwtResponse;
 import com.task_management_system.task_management_system.security.model.LoginRequest;
 import com.task_management_system.task_management_system.security.model.MessageResponse;
@@ -20,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,20 +48,31 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public JwtResponse authUser(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        String jwt = "";
+        UserDetailsImpl userDetails = null;
+        List<String> roles = new ArrayList<>();
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
+        if(!userRepository.existsByEmail(loginRequest.getEmail())){
+            throw new AuthorizationException("Email not found.");
+        }
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            jwt = jwtUtils.generateJwtToken(authentication);
+            userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            roles = userDetails.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
+        }catch (Exception e){
+            throw new AuthorizationException("Password is incorrect!");
+        }
+
         return new JwtResponse(jwt,
                 userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
+                userDetails.getUsername(), //email
                 roles);
     }
 
@@ -66,10 +80,10 @@ public class AuthServiceImpl implements AuthService {
     public MessageResponse registerUser(SignupRequest signUpRequest) {
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new MessageResponse("Error: Email is already in use!");
+            throw new RegistrationException("Email is already in use!");
         }
 
-        User user = new User(signUpRequest.getUsername(),
+        User user = new User(
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
 

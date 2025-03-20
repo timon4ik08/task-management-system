@@ -1,5 +1,6 @@
 package com.task_management_system.task_management_system.security;
 
+import com.task_management_system.task_management_system.security.exception.AuthorizationException;
 import com.task_management_system.task_management_system.security.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -48,16 +49,14 @@ public class JwtUtils {
         try {
             Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
             return true;
-        } catch (MalformedJwtException e) {
-            logger.error("Invalid JWT token: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
-            logger.error("JWT token is expired: {}", e.getMessage());
+            throw new AuthorizationException("JWT token is expired");
         } catch (UnsupportedJwtException e) {
-            logger.error("JWT token is unsupported: {}", e.getMessage());
+            throw new AuthorizationException("JWT token is unsupported");
         } catch (IllegalArgumentException e) {
-            logger.error("JWT claims string is empty: {}", e.getMessage());
+            throw new AuthorizationException("JWT claims string is empty");
+        } catch (Exception e){
+            throw new AuthorizationException("Error JWT token");
         }
-
-        return false;
     }
 }

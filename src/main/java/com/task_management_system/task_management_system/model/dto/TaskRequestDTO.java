@@ -1,26 +1,17 @@
 package com.task_management_system.task_management_system.model.dto;
 
-import com.task_management_system.task_management_system.model.Comment;
 import com.task_management_system.task_management_system.model.TaskPriority;
 import com.task_management_system.task_management_system.model.TaskStatus;
 import com.task_management_system.task_management_system.model.User;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
-@Getter
-@Setter
-public class TaskDTO {
-    private Long id;
+@Data
+public class TaskRequestDTO {
     private String title;
     private String description;
     private TaskStatus status;
     private TaskPriority priority;
-    private Long authorId;
-    private Long assigneeId;
-    private List<CommentDTO> comments;
-
-    // Getters and Setters
+    private User assignee;
 }

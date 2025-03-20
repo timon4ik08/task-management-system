@@ -1,6 +1,6 @@
 package com.task_management_system.task_management_system.security;
 
-import com.task_management_system.task_management_system.security.service.UserServiceImpl;
+import com.task_management_system.task_management_system.security.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtils jwtUtils;
     @Autowired
-    private UserServiceImpl userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
 
