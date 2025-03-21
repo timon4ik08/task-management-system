@@ -1,14 +1,13 @@
 package com.task_management_system.task_management_system.controller;
 
 import com.task_management_system.task_management_system.annotation.CurrentUser;
-import com.task_management_system.task_management_system.exception.ResponseException;
+import com.task_management_system.task_management_system.exception.response.ResponseException;
 import com.task_management_system.task_management_system.model.dto.CommentRequestsDTO;
 import com.task_management_system.task_management_system.model.dto.CommentResponse;
 import com.task_management_system.task_management_system.model.dto.UserDTO;
 import com.task_management_system.task_management_system.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;

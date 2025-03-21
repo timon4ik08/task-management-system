@@ -1,5 +1,7 @@
 package com.task_management_system.task_management_system.service.impl;
 
+import com.task_management_system.task_management_system.exception.TaskException;
+import com.task_management_system.task_management_system.exception.UserException;
 import com.task_management_system.task_management_system.model.*;
 import com.task_management_system.task_management_system.model.dto.TaskResponseDTO;
 import com.task_management_system.task_management_system.model.dto.TaskRequestDTO;
@@ -35,12 +37,12 @@ public class TaskServiceImpl implements TaskService {
 
     public TaskResponseDTO createTask(TaskRequestDTO taskRequest, UserDTO userDTO) {
         User author = userRepository.findById(userDTO.getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserException("User not found"));
 
         User assignee = null;
         if (taskRequest.getAssigneeEmail() != null && !taskRequest.getAssigneeEmail().equals(userDTO.getEmail())) {
             assignee = userRepository.findByEmail(taskRequest.getAssigneeEmail())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseThrow(() -> new UserException("User not found"));
         }
 
         Task task = new Task();
@@ -56,12 +58,12 @@ public class TaskServiceImpl implements TaskService {
         return mapper.map(createdTask, TaskResponseDTO.class);
     }
 
-    public Task assignTask(Long taskId, Long assigneeId, String assigneeEmail, UserDTO userDTO) {
+    public TaskResponseDTO assignTask(Long taskId, Long assigneeId, String assigneeEmail, UserDTO userDTO) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new TaskException("Task not found"));
 
         User currentUser = userRepository.findById(userDTO.getId())
-                .orElseThrow(() -> new RuntimeException("Current user not found"));
+                .orElseThrow(() -> new UserException("Current user not found"));
 
         if (!task.getAuthor().equals(currentUser)) {
             throw new AccessDeniedException("You can only assign your own tasks");
@@ -70,24 +72,25 @@ public class TaskServiceImpl implements TaskService {
         User assignee;
         if (assigneeId != null) {
             assignee = userRepository.findById(assigneeId)
-                    .orElseThrow(() -> new RuntimeException("Assignee not found"));
+                    .orElseThrow(() -> new UserException("User for assignee not found"));
         } else if (assigneeEmail != null) {
             assignee = userRepository.findByEmail(assigneeEmail)
-                    .orElseThrow(() -> new RuntimeException("Assignee not found"));
+                    .orElseThrow(() -> new UserException("User for assignee not found"));
         } else {
             throw new IllegalArgumentException("Assignee ID or Email must be provided");
         }
 
         task.setAssignee(assignee);
-        return taskRepository.save(task);
+        Task taskUpdate = taskRepository.save(task);
+        return mapper.map(taskUpdate, TaskResponseDTO.class);
     }
 
     public void deleteTask(Long taskId, UserDTO userDTO) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new TaskException("Task not found"));
 
         if (!task.getAuthor().getId().equals(userDTO.getId()) && !userDTO.isAdmin()) {
-            throw new RuntimeException("Not permission");
+            throw new AccessDeniedException("Only the author or admin can delete this task.");
         }
 
         taskRepository.delete(task);
@@ -105,7 +108,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     public TaskResponseDTO updateTask(Long taskId, TaskRequestDTO taskRequest, UserDTO userDTO) { //Пользователи могут управлять своими задачами, если указаны как исполнитель: менять статус, оставлять комментарии.
-        Task task = taskRepository.findById(taskId).orElseThrow( ()-> new RuntimeException("task none"));
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("task none"));
 
         checkUpdatePermissions(task, userDTO, taskRequest);
 
@@ -114,7 +117,7 @@ public class TaskServiceImpl implements TaskService {
         Optional.ofNullable(taskRequest.getStatus()).ifPresent(task::setStatus);
         Optional.ofNullable(taskRequest.getPriority()).ifPresent(task::setPriority);
         Optional.ofNullable(taskRequest.getAssigneeEmail())
-                .ifPresent(email -> userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("not user")));
+                .ifPresent(email -> userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("not user")));
 
         Task taskUpdate = taskRepository.save(task);
 
@@ -129,7 +132,7 @@ public class TaskServiceImpl implements TaskService {
         boolean isAdmin = userDTO.isAdmin();
 
         if (!(isAuthor || isAssignee || isAdmin)) {
-            throw new RuntimeException("No permission");
+            throw new AccessDeniedException("Only the author, admin or assigned user can get this task.");
         }
 
         return mapper.map(task, TaskResponseDTO.class);
@@ -139,7 +142,7 @@ public class TaskServiceImpl implements TaskService {
         boolean isAuthorOrAdmin = task.getAuthor().getId().equals(userDTO.getId()) || userDTO.isAdmin();
 
         if (!isAuthorOrAdmin && !task.getAssignee().getId().equals(userDTO.getId())) {
-            throw new RuntimeException("You do not have permission to update this task.");
+            throw new AccessDeniedException("Only the author, admin or assigned user can edit this task.");
         }
 
         if (!isAuthorOrAdmin) {
@@ -159,7 +162,7 @@ public class TaskServiceImpl implements TaskService {
             }
 
             if (!unauthorizedFields.isEmpty()) {
-                throw new RuntimeException(String.valueOf(unauthorizedFields));
+                throw new AccessDeniedException("Only the author or admin can edit this field: " + unauthorizedFields);
             }
         }
     }

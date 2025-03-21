@@ -1,4 +1,4 @@
-package com.task_management_system.task_management_system.exception;
+package com.task_management_system.task_management_system.exception.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;

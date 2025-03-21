@@ -2,7 +2,7 @@ package com.task_management_system.task_management_system.controller;
 
 import com.task_management_system.task_management_system.annotation.AdminOnly;
 import com.task_management_system.task_management_system.annotation.CurrentUser;
-import com.task_management_system.task_management_system.exception.ResponseException;
+import com.task_management_system.task_management_system.exception.response.ResponseException;
 import com.task_management_system.task_management_system.model.dto.UserDTO;
 import com.task_management_system.task_management_system.security.model.ChangePasswordRequest;
 import com.task_management_system.task_management_system.security.model.UpdateRolesRequest;
@@ -19,7 +19,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;

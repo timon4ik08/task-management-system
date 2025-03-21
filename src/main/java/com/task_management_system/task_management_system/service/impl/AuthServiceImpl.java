@@ -3,8 +3,8 @@ package com.task_management_system.task_management_system.service.impl;
 import com.task_management_system.task_management_system.model.ERole;
 import com.task_management_system.task_management_system.model.Role;
 import com.task_management_system.task_management_system.model.User;
-import com.task_management_system.task_management_system.security.exception.AuthorizationException;
-import com.task_management_system.task_management_system.security.exception.RegistrationException;
+import com.task_management_system.task_management_system.exception.AuthorizationException;
+import com.task_management_system.task_management_system.exception.RegistrationException;
 import com.task_management_system.task_management_system.security.model.JwtResponse;
 import com.task_management_system.task_management_system.security.model.LoginRequest;
 import com.task_management_system.task_management_system.security.model.MessageResponse;
@@ -23,7 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

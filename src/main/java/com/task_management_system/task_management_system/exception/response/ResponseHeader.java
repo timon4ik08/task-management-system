@@ -1,4 +1,4 @@
-package com.task_management_system.task_management_system.exception;
+package com.task_management_system.task_management_system.exception.response;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

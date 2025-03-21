@@ -1,5 +1,8 @@
 package com.task_management_system.task_management_system.service.impl;
 
+import com.task_management_system.task_management_system.exception.CommentException;
+import com.task_management_system.task_management_system.exception.TaskException;
+import com.task_management_system.task_management_system.exception.UserException;
 import com.task_management_system.task_management_system.model.Comment;
 import com.task_management_system.task_management_system.model.Task;
 import com.task_management_system.task_management_system.model.User;
@@ -34,8 +37,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentResponse addComment(Long taskId, CommentRequestsDTO commentRequests, UserDTO userDTO) {
-        User user = userRepository.findById(userDTO.getId()).orElseThrow(() -> new RuntimeException("Not found user"));
-        Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Not found task"));
+        User user = userRepository.findById(userDTO.getId()).orElseThrow(() -> new UserException("Not found user"));
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskException("Not found task with id = " + taskId));
 
         Comment comment = new Comment();
         comment.setText(commentRequests.getText());
@@ -48,9 +51,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteComment(Long taskId, Long commentId, UserDTO userDTO) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("not comment"));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentException("Not found this comment with id = " + taskId));
         if(!Objects.equals(comment.getTask().getId(), taskId)){
-            throw new RuntimeException("Not task with this id");
+            throw new CommentException("Not found task with comment with id = " + commentId);
         }
         boolean isAuthor = Objects.equals(comment.getUser().getId(), userDTO.getId());
         boolean isAdmin = userDTO.isAdmin();

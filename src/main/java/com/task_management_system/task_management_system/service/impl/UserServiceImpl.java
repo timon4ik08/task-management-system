@@ -1,5 +1,8 @@
 package com.task_management_system.task_management_system.service.impl;
 
+import com.task_management_system.task_management_system.exception.InvalidPasswordException;
+import com.task_management_system.task_management_system.exception.RoleException;
+import com.task_management_system.task_management_system.exception.UserException;
 import com.task_management_system.task_management_system.model.ERole;
 import com.task_management_system.task_management_system.model.Role;
 import com.task_management_system.task_management_system.model.User;
@@ -16,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,17 +40,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getCurrentUserId(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Not found user"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserException("Not found user with id = " + userId));
         return mapper.map(user, UserDTO.class);
     }
 
     @Override
     public void changePassword(Long userId, ChangePasswordRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserException("Not found user with id = " + userId));
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            throw new RuntimeException("Incorrect old password");
+            throw new InvalidPasswordException("Incorrect old password");
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -56,11 +60,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO updateUserRoles(Long userId, UpdateRolesRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserException("Not found user with id = " + userId));
 
         Set<Role> newRoles = request.getRoles().stream()
                 .map(roleName -> roleRepository.findByName(ERole.valueOf(roleName))
-                        .orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
+                        .orElseThrow(() -> new RoleException("Role not found: " + roleName)))
                 .collect(Collectors.toSet());
 
         user.setRoles(newRoles);

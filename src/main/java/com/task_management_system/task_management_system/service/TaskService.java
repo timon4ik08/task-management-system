@@ -14,7 +14,7 @@ import java.util.List;
 public interface TaskService {
     TaskResponseDTO createTask(TaskRequestDTO taskRequest, UserDTO userDTO);
 
-    Task assignTask(Long taskId, Long assigneeId, String assigneeEmail, UserDTO userDTO);
+    TaskResponseDTO assignTask(Long taskId, Long assigneeId, String assigneeEmail, UserDTO userDTO);
 
     void deleteTask(Long taskId, UserDTO userDTO);
 

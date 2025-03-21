@@ -1,6 +1,6 @@
 package com.task_management_system.task_management_system.security;
 
-import com.task_management_system.task_management_system.security.exception.AuthorizationException;
+import com.task_management_system.task_management_system.exception.AuthorizationException;
 import com.task_management_system.task_management_system.security.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;

@@ -2,7 +2,7 @@ package com.task_management_system.task_management_system.controller;
 
 import com.task_management_system.task_management_system.annotation.AdminOnly;
 import com.task_management_system.task_management_system.annotation.CurrentUser;
-import com.task_management_system.task_management_system.exception.ResponseException;
+import com.task_management_system.task_management_system.exception.response.ResponseException;
 import com.task_management_system.task_management_system.model.Task;
 import com.task_management_system.task_management_system.model.dto.TaskResponseDTO;
 import com.task_management_system.task_management_system.model.dto.TaskRequestDTO;
@@ -67,12 +67,12 @@ public class TaskController {
             @ApiResponse(responseCode = "404", description = "Task or assignee not found", content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
     @PutMapping("/{taskId}/assign")
-    public ResponseEntity<Task> assignTask(
+    public ResponseEntity<TaskResponseDTO> assignTask(
             @PathVariable Long taskId,
             @RequestParam(required = false) Long assigneeId,
             @RequestParam(required = false) String assigneeEmail,
             @Parameter(hidden = true) @CurrentUser UserDTO userDTO) {
-        Task task = taskService.assignTask(taskId, assigneeId, assigneeEmail, userDTO);
+        TaskResponseDTO task = taskService.assignTask(taskId, assigneeId, assigneeEmail, userDTO);
         return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
