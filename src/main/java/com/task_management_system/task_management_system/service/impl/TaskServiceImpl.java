@@ -91,8 +91,8 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
-        if(!task.getAuthor().getId().equals(userDTO.getId()) || userDTO.isAdmin()){
-            throw new RuntimeException("Not permision");
+        if (!task.getAuthor().getId().equals(userDTO.getId()) && !userDTO.isAdmin()) {
+            throw new RuntimeException("Not permission");
         }
 
         taskRepository.delete(task);

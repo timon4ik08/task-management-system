@@ -18,11 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -50,7 +52,7 @@ public class AuthServiceImpl implements AuthService {
     public JwtResponse authUser(LoginRequest loginRequest) {
         String jwt = "";
         UserDetailsImpl userDetails = null;
-        List<String> roles = new ArrayList<>();
+        Set<Role> roles = new HashSet<>();
 
         if(!userRepository.existsByEmail(loginRequest.getEmail())){
             throw new AuthorizationException("Email not found.");
@@ -63,9 +65,17 @@ public class AuthServiceImpl implements AuthService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             jwt = jwtUtils.generateJwtToken(authentication);
             userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            roles = userDetails.getAuthorities().stream()
-                    .map(item -> item.getAuthority())
-                    .collect(Collectors.toList());
+
+            List<String> roleList= userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toList();
+
+            roles = roleList.stream()
+                    .map(roleName -> roleRepository.findByName(ERole.valueOf(roleName))
+                            .orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
+                    .collect(Collectors.toSet());
+
+
         }catch (Exception e){
             throw new AuthorizationException("Password is incorrect!");
         }

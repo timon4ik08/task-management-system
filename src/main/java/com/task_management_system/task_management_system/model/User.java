@@ -9,7 +9,9 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -33,6 +35,10 @@ public class User {
     @NotBlank
     @Size(max = 120)
     private String password;
+
+    @CreatedDate
+    @Column(name = "reg_at", updatable = false)
+    private LocalDateTime regAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(  name = "user_roles",

@@ -60,7 +60,12 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/api/test/**").permitAll()
+                                .requestMatchers(
+                                        "api/swagger-ui/**",       // Разрешить доступ к Swagger UI
+                                        "/v3/api-docs/**",       // Разрешить доступ к OpenAPI документации
+                                        "/swagger-resources/**", // Разрешить доступ к ресурсам Swagger
+                                        "/webjars/**"           // Разрешить доступ к веб-ресурсам Swagger
+                                ).permitAll()
                                 .anyRequest().authenticated()
                 );
 
