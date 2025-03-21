@@ -2,18 +2,27 @@ package com.task_management_system.task_management_system.model.dto;
 
 import com.task_management_system.task_management_system.model.TaskPriority;
 import com.task_management_system.task_management_system.model.TaskStatus;
-import com.task_management_system.task_management_system.model.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-//@Schema(description = "DTO для создания задачи")
 @Data
+@Schema(description = "Data Transfer Object (DTO) for creating or updating a task. Includes task details such as " +
+        "title, description, status, priority, and optional assignee email.")
 public class TaskRequestDTO {
-    //@Schema(description = "Название задачи", example = "Исправить баг в коде")
+    @Schema(description = "Title of the task", example = "Fix bug in authentication module")
     private String title;
 
-    //@Schema(description = "Описание задачи", example = "Не работает кнопка логина")
+    @Schema(description = "Description of the task", example = "The bug occurs when the user logs in with an " +
+            "invalid password")
     private String description;
+
+    @Schema(description = "Status of the task", example = "IN_PROGRESS")
     private TaskStatus status;
+
+    @Schema(description = "Priority of the task", example = "HIGH")
     private TaskPriority priority;
-    private User assignee;
+
+    @Schema(description = "Task assignee (optional). If not provided, the task will be assigned to the current user.",
+            example = "user@user.com", nullable = true)
+    private String assigneeEmail;
 }

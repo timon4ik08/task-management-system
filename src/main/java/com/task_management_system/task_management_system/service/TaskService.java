@@ -12,7 +12,7 @@ import java.security.Principal;
 import java.util.List;
 
 public interface TaskService {
-    TaskResponseDTO createTask(TaskRequestDTO taskRequest, Long assigneeId, String assigneeEmail, UserDTO userDTO);
+    TaskResponseDTO createTask(TaskRequestDTO taskRequest, UserDTO userDTO);
 
     Task assignTask(Long taskId, Long assigneeId, String assigneeEmail, UserDTO userDTO);
 

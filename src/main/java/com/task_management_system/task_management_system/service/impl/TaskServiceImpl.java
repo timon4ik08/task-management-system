@@ -33,18 +33,13 @@ public class TaskServiceImpl implements TaskService {
 
     private final ModelMapper mapper = new ModelMapper();
 
-    public TaskResponseDTO createTask(TaskRequestDTO taskRequest, Long assigneeId, String assigneeEmail, UserDTO userDTO) {
-//        User author = userRepository.findById(userDTO.getId())
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-        User author = userRepository.findByEmail(userDTO.getEmail())
+    public TaskResponseDTO createTask(TaskRequestDTO taskRequest, UserDTO userDTO) {
+        User author = userRepository.findById(userDTO.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         User assignee = null;
-        if(assigneeId != null && !assigneeId.equals(author.getId())){
-            assignee = userRepository.findById(assigneeId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-        } else if (assigneeEmail != null && !assigneeEmail.equals(author.getEmail())) {
-            assignee = userRepository.findByEmail(assigneeEmail)
+        if (taskRequest.getAssigneeEmail() != null && !taskRequest.getAssigneeEmail().equals(userDTO.getEmail())) {
+            assignee = userRepository.findByEmail(taskRequest.getAssigneeEmail())
                     .orElseThrow(() -> new RuntimeException("User not found"));
         }
 
@@ -118,7 +113,8 @@ public class TaskServiceImpl implements TaskService {
         Optional.ofNullable(taskRequest.getDescription()).ifPresent(task::setDescription);
         Optional.ofNullable(taskRequest.getStatus()).ifPresent(task::setStatus);
         Optional.ofNullable(taskRequest.getPriority()).ifPresent(task::setPriority);
-        Optional.ofNullable(taskRequest.getAssignee()).ifPresent(task::setAssignee);
+        Optional.ofNullable(taskRequest.getAssigneeEmail())
+                .ifPresent(email -> userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("not user")));
 
         Task taskUpdate = taskRepository.save(task);
 
@@ -158,8 +154,8 @@ public class TaskServiceImpl implements TaskService {
             if (taskRequest.getPriority() != null) {
                 unauthorizedFields.add("priority");
             }
-            if (taskRequest.getAssignee() != null) {
-                unauthorizedFields.add("assignee");
+            if (taskRequest.getAssigneeEmail() != null) {
+                unauthorizedFields.add("assigneeEmail");
             }
 
             if (!unauthorizedFields.isEmpty()) {
