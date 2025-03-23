@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,11 +26,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @Tag(name = "User Management", description = "APIs for managing users, including retrieving user details," +
         " changing passwords, and updating roles.")
 @RestController
 @RequestMapping("api/users")
-class UserController {
+public class UserController {
     private final UserService userService;
 
     @Autowired
@@ -58,8 +60,10 @@ class UserController {
     @GetMapping("/{userId}")
     @AdminOnly
     public ResponseEntity<UserDTO> getUser(@Parameter(description = "ID of the user to retrieve", example = "1")
-                                               @PathVariable Long userId) {
+                                           @PathVariable Long userId) {
+        log.info("Fetching user by ID: {}", userId);
         UserDTO userDTO = userService.getCurrentUserId(userId);
+        log.debug("User fetched successfully: {}", userDTO);
         return ResponseEntity.ok(userDTO);
     }
 
@@ -90,7 +94,9 @@ class UserController {
                                                                        value = "{\"currentPassword\": \"oldPassword123\", \"newPassword\": \"newPassword123\"}"
                                                                )))
                                                @RequestBody ChangePasswordRequest request) {
+        log.info("Changing password for user: {}", userDTO.getId());
         userService.changePassword(userDTO.getId(), request);
+        log.debug("Password changed successfully for user: {}", userDTO.getId());
         return ResponseEntity.ok().build();
     }
 
@@ -123,7 +129,9 @@ class UserController {
                                                                )
                                                        )
                                                ) @RequestBody UpdateRolesRequest request) {
+        log.info("Updating roles for user: {}", userId);
         UserDTO userDTO = userService.updateUserRoles(userId, request);
+        log.debug("Roles updated successfully for user: {}", userDTO);
         return ResponseEntity.ok(userDTO);
     }
 
@@ -164,7 +172,9 @@ class UserController {
     public ResponseEntity<Page<UserDTO>> getAllUsers(@Parameter(hidden = true) @PageableDefault(size = 5,
             sort = "id",
             direction = Sort.Direction.DESC) Pageable pageable) {
+        log.info("Fetching all users. Pageable: {}", pageable);
         Page<UserDTO> users = userService.getAllUsers(pageable);
+        log.debug("All users fetched successfully: {}", users);
         return ResponseEntity.ok(users);
     }
 }

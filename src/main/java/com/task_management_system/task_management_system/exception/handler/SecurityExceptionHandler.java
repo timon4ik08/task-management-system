@@ -31,7 +31,7 @@ public class SecurityExceptionHandler {
                 .setTitle("Registration Error: ")
                 .setStackTrace(ex.getStackTrace())
                 .build();
-        return new ResponseEntity<>(responseException.toString(), ResponseHeader.headers, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(responseException.toString(), ResponseHeader.headers, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(InvalidPasswordException.class)

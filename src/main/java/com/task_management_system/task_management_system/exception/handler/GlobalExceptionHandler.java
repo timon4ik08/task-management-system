@@ -87,7 +87,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 new ResponseException("AccessDenied error: ", ex.getMessage()).toString(),
                 ResponseHeader.headers,
-                HttpStatus.NOT_FOUND);
+                HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -96,6 +96,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 new ResponseException("IllegalArgument error: ", ex.getMessage()).toString(),
                 ResponseHeader.headers,
-                HttpStatus.NOT_FOUND);
+                HttpStatus.BAD_REQUEST);
     }
 }

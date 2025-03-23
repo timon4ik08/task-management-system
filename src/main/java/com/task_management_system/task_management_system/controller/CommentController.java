@@ -18,6 +18,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Slf4j
 @RestController
 @RequestMapping("api/tasks/{taskId}/comments")
 @Tag(name = "Comment Management", description = "APIs for managing comments on tasks")
@@ -59,7 +73,9 @@ public class CommentController {
             )
             @RequestBody CommentRequestsDTO comment,
             @Parameter(hidden = true) @CurrentUser UserDTO userDTO) {
+        log.info("Adding comment to task. Task ID: {}, User: {}, Comment: {}", taskId, userDTO, comment);
         CommentResponse commentResponse = commentService.addComment(taskId, comment, userDTO);
+        log.debug("Comment added successfully: {}", commentResponse);
         return new ResponseEntity<>(commentResponse, HttpStatus.OK);
     }
 
@@ -80,7 +96,9 @@ public class CommentController {
             @Parameter(description = "ID of the task from which the comment will be deleted", example = "1") @PathVariable Long taskId,
             @Parameter(description = "ID of the comment to delete", example = "1") @PathVariable Long commentId,
             @Parameter(hidden = true) @CurrentUser UserDTO userDTO) {
+        log.info("Deleting comment. Task ID: {}, Comment ID: {}, User: {}", taskId, commentId, userDTO);
         commentService.deleteComment(taskId, commentId, userDTO);
+        log.debug("Comment deleted successfully. Task ID: {}, Comment ID: {}", taskId, commentId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

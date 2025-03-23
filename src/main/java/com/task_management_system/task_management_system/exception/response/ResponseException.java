@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Schema(description = "Response object for exception handling. Contains error details such as title, message, and optional stack trace.")
 public class ResponseException {
-    @Schema(description = "Title of the error", example = "Validation Error")
+    @Schema(description = "Title of the error", example = "Text Error")
     private String title;
 
-    @Schema(description = "Detailed error message", example = "The 'email' field must be a valid email address.")
+    @Schema(description = "Detailed error message", example = "Full text Error.")
     private String message;
 
     @Schema(description = "Stack trace of the error (optional). Only included if 'enableStackTrace' is true.", example = "[\"[2025-03-21 14:30:00] - com.example.MyClass.myMethod(MyClass.java:123)\"]")

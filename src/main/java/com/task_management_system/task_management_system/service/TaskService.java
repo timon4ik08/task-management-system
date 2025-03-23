@@ -1,15 +1,10 @@
 package com.task_management_system.task_management_system.service;
 
-import com.task_management_system.task_management_system.model.*;
 import com.task_management_system.task_management_system.model.dto.TaskResponseDTO;
 import com.task_management_system.task_management_system.model.dto.TaskRequestDTO;
 import com.task_management_system.task_management_system.model.dto.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-
-import java.security.Principal;
-import java.util.List;
 
 public interface TaskService {
     TaskResponseDTO createTask(TaskRequestDTO taskRequest, UserDTO userDTO);

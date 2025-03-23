@@ -1,0 +1,933 @@
+{
+	"info": {
+		"_postman_id": "dccbb9d0-50f8-404a-944f-e8249aaecf1a",
+		"name": "task-manager-system",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15237626"
+	},
+	"item": [
+		{
+			"name": "Admin permission",
+			"item": [
+				{
+					"name": "Login (ADMIN credentials)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {\r",
+									"    const responseData = pm.response.json();\r",
+									"    if (responseData.token) {\r",
+									"        pm.environment.set(\"token\", responseData.token);\r",
+									"        console.log(\"Токен сохранен:\", responseData.token);\r",
+									"    } else {\r",
+									"        console.error(\"Токен отсутствует в ответе\");\r",
+									"    }\r",
+									"} else {\r",
+									"    console.error(\"Запрос не выполнен успешно. Статус код:\", pm.response.code);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"admin@admin.admin\",\r\n    \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/auth/signin",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All (ADMIN)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/users",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Adding role",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roles\": [\r\n        \"ROLE_USER\",\r\n        \"ROLE_ADMIN\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/users/{{lastUserId}}/roles",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"{{lastUserId}}",
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/users/{{lastUserId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"{{lastUserId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User permission",
+			"item": [
+				{
+					"name": "Registration",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const requestBody = pm.request.body.raw;\r",
+									"if (!requestBody) {\r",
+									"    console.error(\"Тело запроса пустое\");\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"try {\r",
+									"    const bodyData = JSON.parse(requestBody);\r",
+									"    if (bodyData.email && bodyData.password) {\r",
+									"        pm.environment.set(\"email\", bodyData.email);\r",
+									"        pm.environment.set(\"password\", bodyData.password);\r",
+									"        console.log(\"Email и password сохранены в окружение:\", bodyData.email, bodyData.password);\r",
+									"    } else {\r",
+									"        console.error(\"Поля 'email' или 'password' отсутствуют в теле запроса\");\r",
+									"    }\r",
+									"} catch (error) {\r",
+									"    console.error(\"Ошибка при парсинге JSON:\", error);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"1q2w3e4r\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/auth/signup",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registration Static",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const requestBody = pm.request.body.raw;\r",
+									"if (!requestBody) {\r",
+									"    console.error(\"Тело запроса пустое\");\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"try {\r",
+									"    const bodyData = JSON.parse(requestBody); \r",
+									"    if (bodyData.email && bodyData.password) {\r",
+									"        pm.environment.set(\"email\", bodyData.email);\r",
+									"        pm.environment.set(\"password\", bodyData.password);\r",
+									"        console.log(\"Email и password сохранены в окружение:\", bodyData.email, bodyData.password);\r",
+									"    } else {\r",
+									"        console.error(\"Поля 'email' или 'password' отсутствуют в теле запроса\");\r",
+									"    }\r",
+									"} catch (error) {\r",
+									"    console.error(\"Ошибка при парсинге JSON:\", error);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"Gwendolyn_Raynor@hotmail.com\",\r\n    \"password\": \"1q2w3e4r\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/auth/signup",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {\r",
+									"    const responseData = pm.response.json();\r",
+									"    if (responseData.token) {\r",
+									"        pm.environment.set(\"token\", responseData.token);\r",
+									"        pm.environment.set(\"lastUserId\", responseData.id)\r",
+									"        console.log(\"Токен сохранен:\", responseData.token);\r",
+									"    } else {\r",
+									"        console.error(\"Токен отсутствует в ответе\");\r",
+									"    }\r",
+									"} else {\r",
+									"    console.error(\"Запрос не выполнен успешно. Статус код:\", pm.response.code);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"1q2w3e4r\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/auth/signin",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();\r",
+									"if (responseData.id) {\r",
+									"    pm.environment.set(\"lastTaskId\", responseData.id);\r",
+									"    console.log(\"id сохранен:\", responseData.id);\r",
+									"} else {\r",
+									"    console.error(\"id отсутствует в ответе\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-mock-match-request-body",
+								"value": "",
+								"type": "text"
+							},
+							{
+								"key": "Bearer",
+								"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYmJAYmJiLmJiYiIsImlhdCI6MTc0MjE3MTY2MCwiZXhwIjoxNzQyMjU4MDYwfQ.7p0td9GLbkWZecuG5Y_9nhP-x1RQ-z2ToQn4sXQeckM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"{{$randomJobTitle}}\",\r\n    \"description\": \"{{$randomJobDescriptor}}\",\r\n    \"status\": \"PENDING\",\r\n    \"priority\": \"LOW\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/tasks",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get my tasks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/tasks/my",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks",
+								"my"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"priority\": \"HIGH\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/tasks/{{lastTaskId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks",
+								"{{lastTaskId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get task by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/tasks/{{lastTaskId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks",
+								"{{lastTaskId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/tasks/{{lastTaskId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks",
+								"{{lastTaskId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add comment to task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();\r",
+									"if (responseData.id) {\r",
+									"    pm.environment.set(\"lastCommentId\", responseData.id);\r",
+									"    console.log(\"id сохранен:\", responseData.id);\r",
+									" } else {\r",
+									"   console.error(\"id отсутствует в ответе\");\r",
+									" }\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"{{$randomFileType}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/tasks/{{lastTaskId}}/comments",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks",
+								"{{lastTaskId}}",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/tasks/{{lastTaskId}}/comments/{{lastCommentId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks",
+								"{{lastTaskId}}",
+								"comments",
+								"{{lastCommentId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User profile",
+			"item": [
+				{
+					"name": "Registration",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const requestBody = pm.request.body.raw;\r",
+									"if (!requestBody) {\r",
+									"    console.error(\"Тело запроса пустое\");\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"try {\r",
+									"    const bodyData = JSON.parse(requestBody); \r",
+									"    if (bodyData.email && bodyData.password) {\r",
+									"        pm.environment.set(\"email\", bodyData.email);\r",
+									"        pm.environment.set(\"password\", bodyData.password);\r",
+									"        console.log(\"Email и password сохранены в окружение:\", bodyData.email, bodyData.password);\r",
+									"    } else {\r",
+									"        console.error(\"Поля 'email' или 'password' отсутствуют в теле запроса\");\r",
+									"    }\r",
+									"} catch (error) {\r",
+									"    console.error(\"Ошибка при парсинге JSON:\", error);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"1q2w3e4r\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/auth/signup",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    if (responseData.token) {\r",
+									"        pm.environment.set(\"token\", responseData.token);\r",
+									"        console.log(\"Токен сохранен:\", responseData.token);\r",
+									"    } else {\r",
+									"        console.error(\"Токен отсутствует в ответе\");\r",
+									"    }\r",
+									"} else {\r",
+									"    console.error(\"Запрос не выполнен успешно. Статус код:\", pm.response.code);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"1q2w3e4r\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/auth/signin",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const requestBody = pm.request.body.raw;\r",
+									"if (!requestBody) {\r",
+									"    console.error(\"Тело запроса пустое\");\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"try {\r",
+									"    const bodyData = JSON.parse(requestBody);\r",
+									"    if (bodyData.newPassword) {\r",
+									"        pm.environment.set(\"passwordNew\", bodyData.newPassword);\r",
+									"        console.log(\"password сохранены в окружение:\",  bodyData.password);\r",
+									"    } else {\r",
+									"        console.error(\"'password' отсутствуют в теле запроса\");\r",
+									"    }\r",
+									"} catch (error) {\r",
+									"    console.error(\"Ошибка при парсинге JSON:\", error);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"oldPassword\": \"1q2w3e4r\",\r\n    \"newPassword\": \"11223344\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/users/change-password",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login with new password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    if (responseData.token) {\r",
+									"        pm.environment.set(\"token\", responseData.token);\r",
+									"        console.log(\"Токен сохранен:\", responseData.token);\r",
+									"    } else {\r",
+									"        console.error(\"Токен отсутствует в ответе\");\r",
+									"    }\r",
+									"} else {\r",
+									"    console.error(\"Запрос не выполнен успешно. Статус код:\", pm.response.code);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{passwordNew}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/auth/signin",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

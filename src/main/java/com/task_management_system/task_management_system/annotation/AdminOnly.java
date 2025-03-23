@@ -7,8 +7,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.METHOD) // Аннотация может применяться к методам
-@Retention(RetentionPolicy.RUNTIME) // Аннотация доступна в runtime
-@PreAuthorize("hasRole('ADMIN')") // Заменяет @PreAuthorize("hasRole('ADMIN')")
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@PreAuthorize("hasRole('ADMIN')")
 public @interface AdminOnly {
 }

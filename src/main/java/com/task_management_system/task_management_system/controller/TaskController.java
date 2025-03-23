@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @Tag(name = "Task Management", description = "APIs for managing tasks in the system")
 @RestController
 @RequestMapping("api/tasks")
@@ -51,7 +53,9 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<TaskResponseDTO> createTask(@RequestBody TaskRequestDTO taskRequest,
                                                       @Parameter(hidden = true) @CurrentUser UserDTO userDTO) {
+        log.info("Creating a new task. Request: {}, User: {}", taskRequest, userDTO);
         TaskResponseDTO task = taskService.createTask(taskRequest, userDTO);
+        log.debug("Task created successfully: {}", task);
         return new ResponseEntity<>(task, HttpStatus.CREATED);
     }
 
@@ -72,7 +76,9 @@ public class TaskController {
             @RequestParam(required = false) Long assigneeId,
             @RequestParam(required = false) String assigneeEmail,
             @Parameter(hidden = true) @CurrentUser UserDTO userDTO) {
+        log.info("Assigning task. Task ID: {}, Assignee ID: {}, Assignee Email: {}, User: {}", taskId, assigneeId, assigneeEmail, userDTO);
         TaskResponseDTO task = taskService.assignTask(taskId, assigneeId, assigneeEmail, userDTO);
+        log.debug("Task assigned successfully: {}", task);
         return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
@@ -88,8 +94,10 @@ public class TaskController {
     })
     @DeleteMapping("/{taskId}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long taskId,
-                                           @Parameter(hidden = true)  @CurrentUser UserDTO userDTO) {
+                                           @Parameter(hidden = true) @CurrentUser UserDTO userDTO) {
+        log.info("Deleting task. Task ID: {}, User: {}", taskId, userDTO);
         taskService.deleteTask(taskId, userDTO);
+        log.debug("Task deleted successfully. Task ID: {}", taskId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -106,7 +114,9 @@ public class TaskController {
     @GetMapping("/{taskId}")
     public ResponseEntity<TaskResponseDTO> getTask(@PathVariable Long taskId,
                                                    @Parameter(hidden = true) @CurrentUser UserDTO userDTO) {
+        log.info("Fetching task. Task ID: {}, User: {}", taskId, userDTO);
         TaskResponseDTO task = taskService.getTask(taskId, userDTO);
+        log.debug("Task fetched successfully: {}", task);
         return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
@@ -123,7 +133,9 @@ public class TaskController {
                                                             @PageableDefault(size = 5,
                                                                     sort = "id",
                                                                     direction = Sort.Direction.DESC) Pageable pageable) {
+        log.info("Fetching tasks for user. User: {}, Pageable: {}", userDTO, pageable);
         Page<TaskResponseDTO> tasks = taskService.getMyTasks(userDTO, pageable);
+        log.debug("Tasks fetched successfully: {}", tasks);
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
@@ -160,9 +172,11 @@ public class TaskController {
     @AdminOnly
     public ResponseEntity<Page<TaskResponseDTO>> getAllTasks(
             @Parameter(hidden = true) @PageableDefault(size = 5,
-            sort = "id",
-            direction = Sort.Direction.DESC) Pageable pageable) {
+                    sort = "id",
+                    direction = Sort.Direction.DESC) Pageable pageable) {
+        log.info("Fetching all tasks. Pageable: {}", pageable);
         Page<TaskResponseDTO> tasks = taskService.getAllTasks(pageable);
+        log.debug("All tasks fetched successfully: {}", tasks);
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
@@ -182,7 +196,9 @@ public class TaskController {
             @PathVariable Long taskId,
             @RequestBody TaskRequestDTO taskRequest,
             @Parameter(hidden = true) @CurrentUser UserDTO userDTO) {
+        log.info("Updating task. Task ID: {}, Request: {}, User: {}", taskId, taskRequest, userDTO);
         TaskResponseDTO taskUpdate = taskService.updateTask(taskId, taskRequest, userDTO);
+        log.debug("Task updated successfully: {}", taskUpdate);
         return new ResponseEntity<>(taskUpdate, HttpStatus.OK);
     }
 }
