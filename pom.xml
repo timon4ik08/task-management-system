@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.task-manager-system</groupId>
 	<artifactId>task-manager-system</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>task-manager-system</name>
 	<description>Task manager system</description>
 	<properties>
