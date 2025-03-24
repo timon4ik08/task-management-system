@@ -3,6 +3,7 @@ package com.task_management_system.task_management_system.controller;
 import com.task_management_system.task_management_system.model.dto.TaskRequestDTO;
 import com.task_management_system.task_management_system.model.dto.TaskResponseDTO;
 import com.task_management_system.task_management_system.model.dto.UserDTO;
+import com.task_management_system.task_management_system.model.filter.TaskFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -72,7 +73,7 @@ class TaskControllerControllerTest extends BaseControllerTest {
         TaskResponseDTO taskResponse = new TaskResponseDTO();
         List<TaskResponseDTO> taskList = Collections.singletonList(taskResponse);
         Page<TaskResponseDTO> taskPage = new PageImpl<>(taskList, pageable, taskList.size());
-        when(taskService.getMyTasks(any(UserDTO.class), any(Pageable.class))).thenReturn(taskPage);
+        when(taskService.getMyTasks(any(UserDTO.class), any(TaskFilter.class), any(Pageable.class))).thenReturn(taskPage);
 
         mockMvc.perform(get("/api/tasks/my")
                         .param("page", "0")
@@ -90,7 +91,7 @@ class TaskControllerControllerTest extends BaseControllerTest {
         List<TaskResponseDTO> taskList = Collections.singletonList(taskResponse);
         Page<TaskResponseDTO> taskPage = new PageImpl<>(taskList, pageable, taskList.size());
 
-        when(taskService.getAllTasks(any(Pageable.class))).thenReturn(taskPage);
+        when(taskService.getAllTasks(any(TaskFilter.class), any(Pageable.class))).thenReturn(taskPage);
 
         mockMvc.perform(get("/api/tasks/all"))
                 .andExpect(status().isOk())

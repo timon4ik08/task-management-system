@@ -6,6 +6,7 @@ import com.task_management_system.task_management_system.model.*;
 import com.task_management_system.task_management_system.model.dto.TaskResponseDTO;
 import com.task_management_system.task_management_system.model.dto.TaskRequestDTO;
 import com.task_management_system.task_management_system.model.dto.UserDTO;
+import com.task_management_system.task_management_system.model.filter.TaskFilter;
 import com.task_management_system.task_management_system.repository.TaskRepository;
 import com.task_management_system.task_management_system.repository.UserRepository;
 import com.task_management_system.task_management_system.service.TaskService;
@@ -133,18 +134,18 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Page<TaskResponseDTO> getMyTasks(UserDTO userDTO, Pageable pageable) {
+    public Page<TaskResponseDTO> getMyTasks(UserDTO userDTO, TaskFilter filter, Pageable pageable) {
         log.info("Fetching tasks assigned to user with ID: {}", userDTO.getId());
-        Page<Task> tasks = taskRepository.findByAssigneeId(userDTO.getId(), pageable);
+        Page<Task> tasks = taskRepository.findByAssigneeId(userDTO.getId(), filter, pageable);
         log.info("Successfully fetched {} tasks for user with ID: {}", tasks.getTotalElements(), userDTO.getId());
         return tasks.map(task -> mapper.map(task, TaskResponseDTO.class));
     }
 
     @Override
-    public Page<TaskResponseDTO> getAllTasks(Pageable pageable) {
-        log.info("Fetching all tasks with pagination: {}", pageable);
-        Page<Task> tasks = taskRepository.findAll(pageable);
-        log.info("Successfully fetched {} tasks", tasks.getTotalElements());
+    public Page<TaskResponseDTO> getAllTasks(TaskFilter filter, Pageable pageable) {
+        log.info("Fetching all tasks with pagination: {} and filter: {}", pageable, filter);
+        Page<Task> tasks = taskRepository.findAllWithFilters(filter, pageable);
+        log.info("Successfully fetched {} tasks, filter {}", tasks.getTotalElements(), filter);
         return tasks.map(task -> mapper.map(task, TaskResponseDTO.class));
     }
 

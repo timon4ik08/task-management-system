@@ -9,6 +9,7 @@ import com.task_management_system.task_management_system.model.User;
 import com.task_management_system.task_management_system.model.dto.TaskRequestDTO;
 import com.task_management_system.task_management_system.model.dto.TaskResponseDTO;
 import com.task_management_system.task_management_system.model.dto.UserDTO;
+import com.task_management_system.task_management_system.model.filter.TaskFilter;
 import com.task_management_system.task_management_system.service.impl.TaskServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -119,9 +120,9 @@ public class TaskServiceImplTest extends BaseServiceTest {
     @Test
     void getAllTasks_ShouldReturnEmptyPage_WhenNoTasksExist() {
         Page<Task> emptyPage = Page.empty();
-        when(taskRepository.findAll(any(Pageable.class))).thenReturn(emptyPage);
+        when(taskRepository.findAllWithFilters(any(TaskFilter.class), any(Pageable.class))).thenReturn(emptyPage);
 
-        Page<TaskResponseDTO> result = taskService.getAllTasks(PageRequest.of(0, 10));
+        Page<TaskResponseDTO> result = taskService.getAllTasks(new TaskFilter(), PageRequest.of(0, 10));
 
         assertNotNull(result);
         assertEquals(0, result.getTotalElements());
@@ -170,9 +171,9 @@ public class TaskServiceImplTest extends BaseServiceTest {
         List<Task> taskList = List.of(task);
         Page<Task> taskPage = new PageImpl<>(taskList);
 
-        when(taskRepository.findByAssigneeId(1L, PageRequest.of(0, 10))).thenReturn(taskPage);
+        when(taskRepository.findByAssigneeId(1L, new TaskFilter(), PageRequest.of(0, 10))).thenReturn(taskPage);
 
-        Page<TaskResponseDTO> result = taskService.getMyTasks(userDTO, PageRequest.of(0, 10));
+        Page<TaskResponseDTO> result = taskService.getMyTasks(userDTO, new TaskFilter(), PageRequest.of(0, 10));
 
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());

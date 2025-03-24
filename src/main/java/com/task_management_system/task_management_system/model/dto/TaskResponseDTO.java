@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.task_management_system.task_management_system.model.TaskPriority;
 import com.task_management_system.task_management_system.model.TaskStatus;
-import com.task_management_system.task_management_system.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

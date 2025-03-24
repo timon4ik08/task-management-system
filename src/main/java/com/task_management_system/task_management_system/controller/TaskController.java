@@ -3,9 +3,12 @@ package com.task_management_system.task_management_system.controller;
 import com.task_management_system.task_management_system.annotation.AdminOnly;
 import com.task_management_system.task_management_system.annotation.CurrentUser;
 import com.task_management_system.task_management_system.exception.response.ResponseException;
+import com.task_management_system.task_management_system.model.TaskPriority;
+import com.task_management_system.task_management_system.model.TaskStatus;
 import com.task_management_system.task_management_system.model.dto.TaskResponseDTO;
 import com.task_management_system.task_management_system.model.dto.TaskRequestDTO;
 import com.task_management_system.task_management_system.model.dto.UserDTO;
+import com.task_management_system.task_management_system.model.filter.TaskFilter;
 import com.task_management_system.task_management_system.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,60 +125,182 @@ public class TaskController {
 
     @Operation(
             summary = "Get tasks of the current user",
-            description = "This endpoint retrieves a paginated list of tasks assigned to the current authenticated user."
+            description = "This endpoint retrieves a paginated list of tasks assigned to the current authenticated user.",
+            parameters = {
+                    @Parameter(
+                            name = "title",
+                            description = "Filter by task title (case-insensitive partial match)",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "string", example = "urgent")
+                    ),
+                    @Parameter(
+                            name = "status",
+                            description = "Filter by task status",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(implementation = TaskStatus.class, example = "IN_PROGRESS")
+                    ),
+                    @Parameter(
+                            name = "priority",
+                            description = "Filter by task priority",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(implementation = TaskPriority.class, example = "HIGH")
+                    ),
+                    @Parameter(
+                            name = "authorId",
+                            description = "Filter by author ID",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "integer", format = "int64", example = "1")
+                    ),
+                    @Parameter(
+                            name = "authorEmail",
+                            description = "Filter by author email",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "string", format = "email", example = "manager@example.com")
+                    ),
+                    @Parameter(
+                            name = "createdAt",
+                            description = "Filter by minimum creation date (inclusive)",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "string", format = "date-time", example = "2023-01-01T00:00:00")
+                    ),
+                    @Parameter(
+                            name = "page",
+                            description = "Page number (0-based)",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "integer", defaultValue = "0")
+                    ),
+                    @Parameter(
+                            name = "size",
+                            description = "Page size",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "integer", defaultValue = "5")
+                    ),
+                    @Parameter(
+                            name = "sort",
+                            description = "Sorting criteria (format: property,asc|desc)",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "string", defaultValue = "id,desc")
+                    )
+            }
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Tasks retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content(schema = @Schema(implementation = ResponseException.class)))
+            @ApiResponse(responseCode = "401", description = "Unauthorized access",
+                    content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
     @GetMapping("/my")
-    public ResponseEntity<Page<TaskResponseDTO>> getMyTasks(@Parameter(hidden = true) @CurrentUser UserDTO userDTO,
+    public ResponseEntity<Page<TaskResponseDTO>> getMyTasks(@ModelAttribute TaskFilter filter,
+                                                            @Parameter(hidden = true) @CurrentUser UserDTO userDTO,
                                                             @PageableDefault(size = 5,
                                                                     sort = "id",
                                                                     direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("Fetching tasks for user. User: {}, Pageable: {}", userDTO, pageable);
-        Page<TaskResponseDTO> tasks = taskService.getMyTasks(userDTO, pageable);
+        Page<TaskResponseDTO> tasks = taskService.getMyTasks(userDTO, filter, pageable);
         log.debug("Tasks fetched successfully: {}", tasks);
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
     @Operation(
-            summary = "Get all tasks (Admin only)",
-            description = "This endpoint retrieves a paginated list of all tasks in the system. Only accessible by administrators."
+            summary = "Get all tasks with filtering and pagination",
+            description = "Retrieves a paginated list of tasks with optional filtering. Requires ADMIN role.",
+            parameters = {
+                    @Parameter(
+                            name = "title",
+                            description = "Filter by task title (partial match)",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "string")
+                    ),
+                    @Parameter(
+                            name = "status",
+                            description = "Filter by task status",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(implementation = TaskStatus.class)
+                    ),
+                    @Parameter(
+                            name = "priority",
+                            description = "Filter by task priority",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(implementation = TaskPriority.class)
+                    ),
+                    @Parameter(
+                            name = "authorId",
+                            description = "Filter by author ID",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "integer", format = "int64")
+                    ),
+                    @Parameter(
+                            name = "authorEmail",
+                            description = "Filter by author email",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "string", format = "email")
+                    ),
+                    @Parameter(
+                            name = "assigneeId",
+                            description = "Filter by assignee ID",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "integer", format = "int64")
+                    ),
+                    @Parameter(
+                            name = "assigneeEmail",
+                            description = "Filter by assignee email",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "string", format = "email")
+                    ),
+                    @Parameter(
+                            name = "createdAt",
+                            description = "Filter by minimum creation date",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "string", format = "date-time")
+                    ),
+                    @Parameter(
+                            name = "page",
+                            description = "Page number (0-based)",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "integer", defaultValue = "0")
+                    ),
+                    @Parameter(
+                            name = "size",
+                            description = "Page size",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "integer", defaultValue = "5")
+                    ),
+                    @Parameter(
+                            name = "sort",
+                            description = "Sorting criteria (format: property,asc|desc)",
+                            in = ParameterIn.QUERY,
+                            schema = @Schema(type = "string", defaultValue = "id,desc")
+                    )
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successfully retrieved tasks",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = TaskResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized - authentication required"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden - requires ADMIN role"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad request - invalid filter parameters"
+                    )
+            },
+            security = @SecurityRequirement(name = "bearerAuth")
     )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Tasks retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content(schema = @Schema(implementation = ResponseException.class))),
-            @ApiResponse(responseCode = "403", description = "Forbidden access", content = @Content(schema = @Schema(implementation = ResponseException.class)))
-    })
-    @Parameters({
-            @Parameter(
-                    name = "page",
-                    in = ParameterIn.QUERY,
-                    description = "Page number (0-based)",
-                    schema = @Schema(type = "integer", defaultValue = "0", minimum = "0")
-            ),
-            @Parameter(
-                    name = "size",
-                    in = ParameterIn.QUERY,
-                    description = "Number of tasks per page",
-                    schema = @Schema(type = "integer", defaultValue = "10", minimum = "1", maximum = "100")
-            ),
-            @Parameter(
-                    name = "sort",
-                    in = ParameterIn.QUERY,
-                    description = "Sorting criteria in the format: property,asc|desc. Default sort order is ascending. Multiple sort criteria are supported.",
-                    schema = @Schema(type = "array", example = "[\"id,asc\"]")
-            )
-    })
     @GetMapping("/all")
-    @AdminOnly
     public ResponseEntity<Page<TaskResponseDTO>> getAllTasks(
-            @Parameter(hidden = true) @PageableDefault(size = 5,
-                    sort = "id",
-                    direction = Sort.Direction.DESC) Pageable pageable) {
+            @ModelAttribute TaskFilter filter,
+            @Parameter(hidden = true) @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("Fetching all tasks. Pageable: {}", pageable);
-        Page<TaskResponseDTO> tasks = taskService.getAllTasks(pageable);
+        Page<TaskResponseDTO> tasks = taskService.getAllTasks(filter, pageable);
         log.debug("All tasks fetched successfully: {}", tasks);
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
