@@ -4,6 +4,7 @@ import com.task_management_system.task_management_system.annotation.AdminOnly;
 import com.task_management_system.task_management_system.annotation.CurrentUser;
 import com.task_management_system.task_management_system.exception.response.ResponseException;
 import com.task_management_system.task_management_system.model.dto.UserDTO;
+import com.task_management_system.task_management_system.model.filter.TaskFilter;
 import com.task_management_system.task_management_system.security.model.ChangePasswordRequest;
 import com.task_management_system.task_management_system.security.model.UpdateRolesRequest;
 import com.task_management_system.task_management_system.service.UserService;
@@ -58,7 +59,6 @@ public class UserController {
             )
     })
     @GetMapping("/{userId}")
-    @AdminOnly
     public ResponseEntity<UserDTO> getUser(@Parameter(description = "ID of the user to retrieve", example = "1")
                                            @PathVariable Long userId) {
         log.info("Fetching user by ID: {}", userId);
@@ -137,13 +137,13 @@ public class UserController {
 
     @Operation(
             summary = "Get all users",
-            description = "Retrieve a paginated list of all users. Only accessible by administrators."
+            description = "Retrieve a paginated list of all users."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Users retrieved successfully"),
             @ApiResponse(
                     responseCode = "403",
-                    description = "Access denied. Only administrators can access this endpoint.",
+                    description = "Access denied.",
                     content = @Content(schema = @Schema(implementation = ResponseException.class))
             )
     })
@@ -168,7 +168,6 @@ public class UserController {
             )
     })
     @GetMapping
-    @AdminOnly
     public ResponseEntity<Page<UserDTO>> getAllUsers(@Parameter(hidden = true) @PageableDefault(size = 5,
             sort = "id",
             direction = Sort.Direction.DESC) Pageable pageable) {

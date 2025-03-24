@@ -68,7 +68,7 @@
 					"response": []
 				},
 				{
-					"name": "Get All (ADMIN)",
+					"name": "Get All user",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -255,77 +255,6 @@
 					"response": []
 				},
 				{
-					"name": "Registration Static",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const requestBody = pm.request.body.raw;\r",
-									"if (!requestBody) {\r",
-									"    console.error(\"Тело запроса пустое\");\r",
-									"    return;\r",
-									"}\r",
-									"\r",
-									"try {\r",
-									"    const bodyData = JSON.parse(requestBody); \r",
-									"    if (bodyData.email && bodyData.password) {\r",
-									"        pm.environment.set(\"email\", bodyData.email);\r",
-									"        pm.environment.set(\"password\", bodyData.password);\r",
-									"        console.log(\"Email и password сохранены в окружение:\", bodyData.email, bodyData.password);\r",
-									"    } else {\r",
-									"        console.error(\"Поля 'email' или 'password' отсутствуют в теле запроса\");\r",
-									"    }\r",
-									"} catch (error) {\r",
-									"    console.error(\"Ошибка при парсинге JSON:\", error);\r",
-									"}"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"Gwendolyn_Raynor@hotmail.com\",\r\n    \"password\": \"1q2w3e4r\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8080/api/auth/signup",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"auth",
-								"signup"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Login",
 					"event": [
 						{
@@ -359,6 +288,132 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"1q2w3e4r\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/auth/signin",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registration Static",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const requestBody = pm.request.body.raw;\r",
+									"if (!requestBody) {\r",
+									"    console.error(\"Тело запроса пустое\");\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"try {\r",
+									"    const bodyData = JSON.parse(requestBody); \r",
+									"    if (bodyData.email && bodyData.password) {\r",
+									"        pm.environment.set(\"emailS\", bodyData.email);\r",
+									"        pm.environment.set(\"password\", bodyData.password);\r",
+									"        console.log(\"Email и password сохранены в окружение:\", bodyData.email, bodyData.password);\r",
+									"    } else {\r",
+									"        console.error(\"Поля 'email' или 'password' отсутствуют в теле запроса\");\r",
+									"    }\r",
+									"} catch (error) {\r",
+									"    console.error(\"Ошибка при парсинге JSON:\", error);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"Gwendolyn_Raynor@hotmail1.com\",\r\n    \"password\": \"1q2w3e4r\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/auth/signup",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Static",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {\r",
+									"    const responseData = pm.response.json();\r",
+									"    if (responseData.token) {\r",
+									"        pm.environment.set(\"token\", responseData.token);\r",
+									"        pm.environment.set(\"lastUserId\", responseData.id)\r",
+									"        console.log(\"Токен сохранен:\", responseData.token);\r",
+									"    } else {\r",
+									"        console.error(\"Токен отсутствует в ответе\");\r",
+									"    }\r",
+									"} else {\r",
+									"    console.error(\"Запрос не выполнен успешно. Статус код:\", pm.response.code);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{emailS}}\",\r\n    \"password\": \"1q2w3e4r\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -426,7 +481,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"{{$randomJobTitle}}\",\r\n    \"description\": \"{{$randomJobDescriptor}}\",\r\n    \"status\": \"PENDING\",\r\n    \"priority\": \"LOW\"\r\n}",
+							"raw": "{\r\n    \"title\": \"{{$randomJobTitle}}\",\r\n    \"description\": \"{{$randomJobDescriptor}}\",\r\n    \"status\": \"PENDING\",\r\n    \"priority\": \"HIGH\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -478,6 +533,72 @@
 					"response": []
 				},
 				{
+					"name": "Get my tasks with filter",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/tasks/my?priority=HIGH",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks",
+								"my"
+							],
+							"query": [
+								{
+									"key": "priority",
+									"value": "HIGH"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get ALL tasks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/tasks/all",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Update task",
 					"request": {
 						"auth": {
@@ -494,7 +615,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"priority\": \"HIGH\"\r\n}",
+							"raw": "{\r\n    \"priority\": \"HIGH\",\r\n    \"title\": \"123457\",\r\n    \"status\": \"IN_PROGRESS\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -511,6 +632,52 @@
 								"api",
 								"tasks",
 								"{{lastTaskId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assignee task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/tasks/{{lastTaskId}}/assign?assigneeEmail={{emailS}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks",
+								"{{lastTaskId}}",
+								"assign"
+							],
+							"query": [
+								{
+									"key": "assigneeEmail",
+									"value": "{{emailS}}"
+								}
 							]
 						}
 					},

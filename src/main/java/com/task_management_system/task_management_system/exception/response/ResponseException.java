@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,11 +32,17 @@ public class ResponseException {
     private List<String> stackTrace;
 
     @JsonIgnore
-    private boolean enableStackTrace = false; //ToDo
+    private boolean enableStackTrace;
 
     public ResponseException(String title, String message) {
         this.title = title;
         this.message = message;
+    }
+
+    public ResponseException(String title, String message, String enableStackTrace) {
+        this.title = title;
+        this.message = message;
+        this.enableStackTrace = true;
     }
 
     @Override
@@ -60,11 +67,13 @@ public class ResponseException {
         this.title = builder.title;
         this.message = builder.message;
         this.stackTrace = builder.stackTrace;
+        this.enableStackTrace = builder.enableStackTrace;
     }
 
     public static class Builder {
         private String title;
         private String message;
+        private boolean enableStackTrace;
         private List<String> stackTrace;
 
         public Builder setTitle(String title) {
@@ -74,6 +83,11 @@ public class ResponseException {
 
         public Builder setMessage(String message) {
             this.message = message;
+            return this;
+        }
+
+        public Builder setEnableStackTrace(boolean enableStackTrace) {
+            this.enableStackTrace = enableStackTrace;
             return this;
         }
 

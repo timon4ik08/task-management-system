@@ -40,6 +40,7 @@ public class UserInitializationDB implements CommandLineRunner, Ordered {
             user.setRoles(new HashSet<>(roles));
             userRepository.save(user);
             logger.info("Created ADMIN user - {} and password - admin", user.getEmail());
+            logger.info("Change the administrator password!!!");
         }
     }
 

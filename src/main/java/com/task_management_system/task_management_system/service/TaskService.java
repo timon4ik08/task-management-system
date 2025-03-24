@@ -16,7 +16,7 @@ public interface TaskService {
 
     Page<TaskResponseDTO> getMyTasks(UserDTO userDTO, TaskFilter filter, Pageable pageable);
 
-    Page<TaskResponseDTO> getAllTasks(TaskFilter filter , Pageable pageable);
+    Page<TaskResponseDTO> getAllTasks(TaskFilter filter, Pageable pageable);
 
     TaskResponseDTO updateTask(Long taskId, TaskRequestDTO taskRequest, UserDTO userDTO);
 

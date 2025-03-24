@@ -6,5 +6,6 @@ import com.task_management_system.task_management_system.model.dto.UserDTO;
 
 public interface CommentService {
     CommentResponse addComment(Long taskId, CommentRequestsDTO comment, UserDTO userDTO);
+
     void deleteComment(Long taskId, Long commentId, UserDTO userDTO);
 }

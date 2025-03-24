@@ -15,7 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @Table(name = "tasks")
 @Entity
@@ -74,5 +75,22 @@ public class Task {
 
     public Task() {
 
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", priority=" + priority +
+                ", author=" + author.getEmail() +
+                ", assignee=" + assignee.getEmail() +
+                ", comments=" + comments.stream().map(Comment::getText).toString() +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", lastModifiedBy='" + lastModifiedBy + '\'' +
+                '}';
     }
 }

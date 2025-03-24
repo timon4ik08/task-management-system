@@ -1,6 +1,7 @@
 package com.task_management_system.task_management_system.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Data
@@ -13,5 +14,6 @@ public class CommentRequestsDTO {
             example = "This is a sample comment.",
             required = true
     )
+    @NotBlank
     private String text;
 }

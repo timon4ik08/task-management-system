@@ -5,6 +5,7 @@ import com.task_management_system.task_management_system.exception.response.Resp
 import com.task_management_system.task_management_system.exception.AuthorizationException;
 import com.task_management_system.task_management_system.exception.RegistrationException;
 import com.task_management_system.task_management_system.exception.response.ResponseHeader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,12 +15,16 @@ import java.security.InvalidParameterException;
 
 @ControllerAdvice
 public class SecurityExceptionHandler {
+    @Value("exception.enable.stacktrace")
+    private String enableStackTrace;
+
     @ExceptionHandler(AuthorizationException.class)
     public ResponseEntity<?> handlerAuthorizationException(AuthorizationException ex) {
         ResponseException responseException = new ResponseException.Builder()
                 .setMessage(ex.getMessage())
                 .setTitle("Authorization Error: ")
                 .setStackTrace(ex.getStackTrace())
+                .setEnableStackTrace(Boolean.getBoolean(enableStackTrace))
                 .build();
         return new ResponseEntity<>(responseException.toString(), ResponseHeader.headers, HttpStatus.BAD_REQUEST);
     }
@@ -30,6 +35,7 @@ public class SecurityExceptionHandler {
                 .setMessage(ex.getMessage())
                 .setTitle("Registration Error: ")
                 .setStackTrace(ex.getStackTrace())
+                .setEnableStackTrace(Boolean.getBoolean(enableStackTrace))
                 .build();
         return new ResponseEntity<>(responseException.toString(), ResponseHeader.headers, HttpStatus.CONFLICT);
     }
@@ -40,6 +46,7 @@ public class SecurityExceptionHandler {
                 .setMessage(ex.getMessage())
                 .setTitle("Invalid password: ")
                 .setStackTrace(ex.getStackTrace())
+                .setEnableStackTrace(Boolean.getBoolean(enableStackTrace))
                 .build();
         return new ResponseEntity<>(responseException.toString(), ResponseHeader.headers, HttpStatus.BAD_REQUEST);
     }

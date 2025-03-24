@@ -62,9 +62,9 @@ public class CommentController {
             )
             @RequestBody CommentRequestsDTO comment,
             @Parameter(hidden = true) @CurrentUser UserDTO userDTO) {
-        log.info("Adding comment to task. Task ID: {}, User: {}, Comment: {}", taskId, userDTO, comment);
+        log.info("Adding comment to task. Task ID: {}, User: {}, Comment: {}", taskId, userDTO.getId(), comment.getText());
         CommentResponse commentResponse = commentService.addComment(taskId, comment, userDTO);
-        log.debug("Comment added successfully: {}", commentResponse);
+        log.debug("Comment added successfully: {}", commentResponse.getText());
         return new ResponseEntity<>(commentResponse, HttpStatus.OK);
     }
 

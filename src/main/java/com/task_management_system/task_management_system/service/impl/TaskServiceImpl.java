@@ -46,6 +46,7 @@ public class TaskServiceImpl implements TaskService {
                     return new UserException("User not found");
                 });
 
+
         User assignee = null;
         if (taskRequest.getAssigneeEmail() != null && !taskRequest.getAssigneeEmail().equals(userDTO.getEmail())) {
             log.debug("Looking for assignee with email: {}", taskRequest.getAssigneeEmail());
@@ -56,17 +57,40 @@ public class TaskServiceImpl implements TaskService {
                     });
         }
 
+        validRequestForCreateTask(taskRequest);
+
         Task task = new Task();
         task.setTitle(taskRequest.getTitle());
         task.setDescription(taskRequest.getDescription());
-        task.setStatus(TaskStatus.PENDING);
-        task.setPriority(taskRequest.getPriority());
+        task.setStatus(taskRequest.getStatus() == null ? TaskStatus.PENDING : taskRequest.getStatus());
+        task.setPriority(taskRequest.getPriority() == null ? TaskPriority.MEDIUM : taskRequest.getPriority());
         task.setAuthor(author);
         task.setAssignee(assignee == null ? author : assignee);
 
-        Task createdTask = taskRepository.save(task);
+        Task createdTask;
+        try {
+            createdTask = taskRepository.save(task);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         log.info("Task created successfully with ID: {}", createdTask.getId());
         return mapper.map(createdTask, TaskResponseDTO.class);
+    }
+
+    private void validRequestForCreateTask(TaskRequestDTO taskRequest) {
+        Set<String> error = new HashSet<>();
+        if (taskRequest.getTitle() == null) {
+            error.add("title");
+        }
+        if (taskRequest.getDescription() == null) {
+            error.add("description");
+        }
+
+        if (!error.isEmpty()) {
+            log.warn("These fields are required: {}", error);
+            throw new IllegalArgumentException("These fields are required: " + error);
+        }
     }
 
     @Override

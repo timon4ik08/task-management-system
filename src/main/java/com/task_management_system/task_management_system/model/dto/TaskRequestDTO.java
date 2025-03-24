@@ -3,6 +3,7 @@ package com.task_management_system.task_management_system.model.dto;
 import com.task_management_system.task_management_system.model.TaskPriority;
 import com.task_management_system.task_management_system.model.TaskStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import lombok.Data;
 
 @Data
@@ -24,5 +25,6 @@ public class TaskRequestDTO {
 
     @Schema(description = "Task assignee (optional). If not provided, the task will be assigned to the current user.",
             example = "user@user.com", nullable = true)
+    @Email
     private String assigneeEmail;
 }

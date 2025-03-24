@@ -1,6 +1,5 @@
 package com.task_management_system.task_management_system.controller;
 
-import com.task_management_system.task_management_system.annotation.AdminOnly;
 import com.task_management_system.task_management_system.annotation.CurrentUser;
 import com.task_management_system.task_management_system.exception.response.ResponseException;
 import com.task_management_system.task_management_system.model.TaskPriority;
@@ -12,7 +11,6 @@ import com.task_management_system.task_management_system.model.filter.TaskFilter
 import com.task_management_system.task_management_system.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -58,7 +56,7 @@ public class TaskController {
                                                       @Parameter(hidden = true) @CurrentUser UserDTO userDTO) {
         log.info("Creating a new task. Request: {}, User: {}", taskRequest, userDTO);
         TaskResponseDTO task = taskService.createTask(taskRequest, userDTO);
-        log.debug("Task created successfully: {}", task);
+        log.debug("Task created successfully: {}", task.getId());
         return new ResponseEntity<>(task, HttpStatus.CREATED);
     }
 
@@ -131,37 +129,37 @@ public class TaskController {
                             name = "title",
                             description = "Filter by task title (case-insensitive partial match)",
                             in = ParameterIn.QUERY,
-                            schema = @Schema(type = "string", example = "urgent")
+                            schema = @Schema(type = "string")
                     ),
                     @Parameter(
                             name = "status",
                             description = "Filter by task status",
                             in = ParameterIn.QUERY,
-                            schema = @Schema(implementation = TaskStatus.class, example = "IN_PROGRESS")
+                            schema = @Schema(implementation = TaskStatus.class)
                     ),
                     @Parameter(
                             name = "priority",
                             description = "Filter by task priority",
                             in = ParameterIn.QUERY,
-                            schema = @Schema(implementation = TaskPriority.class, example = "HIGH")
+                            schema = @Schema(implementation = TaskPriority.class)
                     ),
                     @Parameter(
                             name = "authorId",
                             description = "Filter by author ID",
                             in = ParameterIn.QUERY,
-                            schema = @Schema(type = "integer", format = "int64", example = "1")
+                            schema = @Schema(type = "integer", format = "int64")
                     ),
                     @Parameter(
                             name = "authorEmail",
                             description = "Filter by author email",
                             in = ParameterIn.QUERY,
-                            schema = @Schema(type = "string", format = "email", example = "manager@example.com")
+                            schema = @Schema(type = "string", format = "email")
                     ),
                     @Parameter(
                             name = "createdAt",
                             description = "Filter by minimum creation date (inclusive)",
                             in = ParameterIn.QUERY,
-                            schema = @Schema(type = "string", format = "date-time", example = "2023-01-01T00:00:00")
+                            schema = @Schema(type = "string", format = "date-time")
                     ),
                     @Parameter(
                             name = "page",
@@ -179,7 +177,7 @@ public class TaskController {
                             name = "sort",
                             description = "Sorting criteria (format: property,asc|desc)",
                             in = ParameterIn.QUERY,
-                            schema = @Schema(type = "string", defaultValue = "id,desc")
+                            schema = @Schema(type = "string")
                     )
             }
     )
@@ -189,9 +187,9 @@ public class TaskController {
                     content = @Content(schema = @Schema(implementation = ResponseException.class)))
     })
     @GetMapping("/my")
-    public ResponseEntity<Page<TaskResponseDTO>> getMyTasks(@ModelAttribute TaskFilter filter,
+    public ResponseEntity<Page<TaskResponseDTO>> getMyTasks(@Parameter(hidden = true) @ModelAttribute TaskFilter filter,
                                                             @Parameter(hidden = true) @CurrentUser UserDTO userDTO,
-                                                            @PageableDefault(size = 5,
+                                                            @Parameter(hidden = true) @PageableDefault(size = 5,
                                                                     sort = "id",
                                                                     direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("Fetching tasks for user. User: {}, Pageable: {}", userDTO, pageable);
@@ -297,7 +295,7 @@ public class TaskController {
     )
     @GetMapping("/all")
     public ResponseEntity<Page<TaskResponseDTO>> getAllTasks(
-            @ModelAttribute TaskFilter filter,
+            @Parameter(hidden = true) @ModelAttribute TaskFilter filter,
             @Parameter(hidden = true) @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("Fetching all tasks. Pageable: {}", pageable);
         Page<TaskResponseDTO> tasks = taskService.getAllTasks(filter, pageable);

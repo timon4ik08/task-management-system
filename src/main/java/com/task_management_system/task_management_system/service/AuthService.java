@@ -7,5 +7,6 @@ import com.task_management_system.task_management_system.security.model.SignupRe
 
 public interface AuthService {
     JwtResponse authUser(LoginRequest loginRequest);
+
     MessageResponse registerUser(SignupRequest signUpRequest);
 }
