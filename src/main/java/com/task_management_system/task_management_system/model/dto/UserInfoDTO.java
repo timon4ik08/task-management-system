@@ -1,9 +1,13 @@
 package com.task_management_system.task_management_system.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Schema(description = "Response Data Transfer Object (DTO) for a user. Contains full details about the user.")
 public class UserInfoDTO {
     @Schema(description = "Unique identifier of the user", example = "1")

@@ -6,8 +6,6 @@ import com.task_management_system.task_management_system.model.ERole;
 import com.task_management_system.task_management_system.model.Role;
 import com.task_management_system.task_management_system.model.User;
 import com.task_management_system.task_management_system.model.dto.UserDTO;
-import com.task_management_system.task_management_system.repository.RoleRepository;
-import com.task_management_system.task_management_system.repository.UserRepository;
 import com.task_management_system.task_management_system.security.model.ChangePasswordRequest;
 import com.task_management_system.task_management_system.security.model.UpdateRolesRequest;
 import com.task_management_system.task_management_system.service.impl.UserServiceImpl;
@@ -15,13 +13,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.*;
 
@@ -31,16 +27,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceImplTest {
-
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private RoleRepository roleRepository;
-
-    @Mock
-    private PasswordEncoder passwordEncoder;
+class UserServiceImplTest extends BaseServiceTest {
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -54,7 +41,6 @@ class UserServiceImplTest {
         user.setId(1L);
         user.setEmail("test@example.com");
         user.setPassword("password");
-
         userDTO = new UserDTO();
         userDTO.setId(1L);
         userDTO.setEmail("test@example.com");
@@ -84,8 +70,8 @@ class UserServiceImplTest {
         request.setNewPassword("newPassword");
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("password", user.getPassword())).thenReturn(true);
-        when(passwordEncoder.encode("newPassword")).thenReturn("encodedNewPassword");
+        when(encoder.matches("password", user.getPassword())).thenReturn(true);
+        when(encoder.encode("newPassword")).thenReturn("encodedNewPassword");
 
         userService.changePassword(1L, request);
 
@@ -99,7 +85,7 @@ class UserServiceImplTest {
         request.setNewPassword("newPassword");
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("incorrectPassword", user.getPassword())).thenReturn(false);
+        when(encoder.matches("incorrectPassword", user.getPassword())).thenReturn(false);
 
         assertThrows(InvalidPasswordException.class, () -> userService.changePassword(1L, request));
     }

@@ -3,6 +3,7 @@ package com.task_management_system.task_management_system.component;
 import com.task_management_system.task_management_system.annotation.CurrentUser;
 import com.task_management_system.task_management_system.model.dto.UserDTO;
 import com.task_management_system.task_management_system.security.service.UserDetailsImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import java.util.stream.Collectors;
 
+@Slf4j
 public class UserDTOArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
@@ -26,13 +28,13 @@ public class UserDTOArgumentResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter,
                                   ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest,
-                                  WebDataBinderFactory binderFactory) throws Exception {
-        // Получаем текущего аутентифицированного пользователя
+                                  WebDataBinderFactory binderFactory) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();
 
-        // Преобразуем UserDetails в UserDTO
+        log.debug("Resolving UserDTO for user: {}", userDetails.getUsername());
+
         UserDTO userDTO = new UserDTO();
         userDTO.setId(((UserDetailsImpl) userDetails).getId());
         userDTO.setEmail(userDetails.getUsername());

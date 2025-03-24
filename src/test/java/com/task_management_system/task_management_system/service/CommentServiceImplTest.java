@@ -9,15 +9,11 @@ import com.task_management_system.task_management_system.model.User;
 import com.task_management_system.task_management_system.model.dto.CommentRequestsDTO;
 import com.task_management_system.task_management_system.model.dto.CommentResponse;
 import com.task_management_system.task_management_system.model.dto.UserDTO;
-import com.task_management_system.task_management_system.repository.CommentRepository;
-import com.task_management_system.task_management_system.repository.TaskRepository;
-import com.task_management_system.task_management_system.repository.UserRepository;
 import com.task_management_system.task_management_system.service.impl.CommentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 
@@ -29,17 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CommentServiceImplTest {
-
-    @Mock
-    private CommentRepository commentRepository;
-
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private TaskRepository taskRepository;
-
+class CommentServiceImplTest extends BaseServiceTest {
     @InjectMocks
     private CommentServiceImpl commentService;
 

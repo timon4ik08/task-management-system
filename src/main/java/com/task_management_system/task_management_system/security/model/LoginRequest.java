@@ -1,6 +1,7 @@
 package com.task_management_system.task_management_system.security.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import lombok.Setter;
 public class LoginRequest {
     @Schema(description = "Email of the user", example = "user@example.com", required = true)
     @NotBlank
+    @Email
     private String email;
 
     @Schema(description = "Password of the user", example = "password123", required = true)

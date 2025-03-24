@@ -9,14 +9,11 @@ import com.task_management_system.task_management_system.model.User;
 import com.task_management_system.task_management_system.model.dto.TaskRequestDTO;
 import com.task_management_system.task_management_system.model.dto.TaskResponseDTO;
 import com.task_management_system.task_management_system.model.dto.UserDTO;
-import com.task_management_system.task_management_system.repository.TaskRepository;
-import com.task_management_system.task_management_system.repository.UserRepository;
 import com.task_management_system.task_management_system.service.impl.TaskServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,16 +29,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TaskServiceImplTest {
-    @Mock
-    private TaskRepository taskRepository;
-
-    @Mock
-    private UserRepository userRepository;
+public class TaskServiceImplTest extends BaseServiceTest {
 
     @InjectMocks
     private TaskServiceImpl taskService;
-
     private User author;
     private User assignee;
     private UserDTO userDTO;
@@ -102,7 +93,7 @@ public class TaskServiceImplTest {
     @Test
     void assignTask_ShouldThrowException_WhenNoAssigneeIdOrEmailProvided() {
         UserDTO authorDTO = new UserDTO();
-        authorDTO.setId(1L); // Автор задачи
+        authorDTO.setId(1L);
 
         when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
 
@@ -118,7 +109,6 @@ public class TaskServiceImplTest {
         authorDTO.setId(1L);
 
         when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
-        //when(userRepository.findByEmail("notfound@example.com")).thenReturn(Optional.empty());
 
         UserException exception = assertThrows(UserException.class,
                 () -> taskService.assignTask(1L, null, "notfound@example.com", authorDTO));

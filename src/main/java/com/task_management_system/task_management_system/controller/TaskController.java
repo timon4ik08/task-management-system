@@ -3,7 +3,6 @@ package com.task_management_system.task_management_system.controller;
 import com.task_management_system.task_management_system.annotation.AdminOnly;
 import com.task_management_system.task_management_system.annotation.CurrentUser;
 import com.task_management_system.task_management_system.exception.response.ResponseException;
-import com.task_management_system.task_management_system.model.Task;
 import com.task_management_system.task_management_system.model.dto.TaskResponseDTO;
 import com.task_management_system.task_management_system.model.dto.TaskRequestDTO;
 import com.task_management_system.task_management_system.model.dto.UserDTO;
