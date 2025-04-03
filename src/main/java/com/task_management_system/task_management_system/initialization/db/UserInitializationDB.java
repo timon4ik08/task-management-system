@@ -22,7 +22,6 @@ public class UserInitializationDB implements CommandLineRunner, Ordered {
     private final RoleRepository roleRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserInitializationDB.class);
 
-    @Autowired
     public UserInitializationDB(UserRepository userRepository, PasswordEncoder encoder, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.encoder = encoder;

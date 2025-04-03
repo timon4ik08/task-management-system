@@ -9,12 +9,18 @@ Task Manager System — это API-сервис для управления за
 - **TaskController** — управление задачами.
 - **UserController** — управление пользователями.
 
+## Технологии и версии
+
+- **Java:** 17
+- **Spring Boot:** 3.4.0
+- **PostgreSQL:** 13
+- **Docker Compose:** 3.8
+- **Maven:** 3.9.8
+
 ## Требования
 
 Перед запуском убедитесь, что у вас установлены:
 - **Docker**
-- **Docker Compose**
-- **Maven**
 
 ## Сборка и запуск проекта
 
@@ -24,17 +30,12 @@ Task Manager System — это API-сервис для управления за
    cd task-manager-system
    ```
 
-2. Соберите проект с помощью Maven:
+2. Запустите сервисы с помощью Docker Compose:
    ```sh
-   mvn clean package
+   docker-compose up --build
    ```
 
-3. Запустите сервисы с помощью Docker Compose:
-   ```sh
-   docker-compose up -d
-   ```
-
-4. Приложение будет доступно по адресу: `http://localhost:8080`
+3. Приложение будет доступно по адресу: `http://localhost:8080`
 
 ### Переменные окружения
 

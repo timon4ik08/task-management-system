@@ -12,7 +12,6 @@ import com.task_management_system.task_management_system.repository.UserReposito
 import com.task_management_system.task_management_system.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -30,7 +29,6 @@ public class TaskServiceImpl implements TaskService {
     private final UserRepository userRepository;
     private final ModelMapper mapper = new ModelMapper();
 
-    @Autowired
     public TaskServiceImpl(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;

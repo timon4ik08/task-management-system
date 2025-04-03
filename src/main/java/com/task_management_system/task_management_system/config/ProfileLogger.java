@@ -10,8 +10,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProfileLogger {
 
-    @Autowired
-    private Environment env;
+    private  final Environment env;
+
+    public ProfileLogger(Environment env){
+        this.env = env;
+    }
 
     @PostConstruct
     public void logActiveProfile() {

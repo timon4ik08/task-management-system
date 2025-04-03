@@ -15,7 +15,6 @@ import com.task_management_system.task_management_system.repository.UserReposito
 import com.task_management_system.task_management_system.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +28,6 @@ public class CommentServiceImpl implements CommentService {
     private final TaskRepository taskRepository;
     private final ModelMapper mapper = new ModelMapper();
 
-    @Autowired
     public CommentServiceImpl(CommentRepository commentRepository, UserRepository userRepository, TaskRepository taskRepository) {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
