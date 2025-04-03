@@ -13,12 +13,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  app:
-    build: .
+  task-manager-system:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: task-manager-system
     depends_on:
       - db
     ports:
-      - "8080-8085:8080"
+      - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/task-manager-system
@@ -29,8 +32,6 @@ services:
       SWAGGER_UI_PATH: /swagger-ui/index.html
       SERVER_PORT: 8080
       EXCEPTION_ENABLE_STACKTRACE: false
-    volumes:
-      - .:/app
 
 volumes:
   postgres_data:
